@@ -1,5 +1,5 @@
 # angular-ng-busy-component-sample
-Angular の ng-busy のラッパーコンポーネントを利用したサンプルです。 
+Angular の ng-busy のラッパーコンポーネントを利用したサンプルです
 
 ## Feature
 - Angular11
