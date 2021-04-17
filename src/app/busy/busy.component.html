@@ -1,0 +1,14 @@
+<ng-template #content>
+  <ng-container [ngBusy]="config">
+    <ng-content></ng-content>
+  </ng-container>
+</ng-template>
+
+<div *ngIf="wrapContent; else noWrap" class="wrapper">
+  <ng-container *ngTemplateOutlet="content"></ng-container>
+</div>
+
+<ng-template #noWrap>
+  <ng-container *ngTemplateOutlet="content"></ng-container>
+</ng-template>
+
