@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { delay } from 'rxjs/operators';
+import { delay, map, switchMap, tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject, Subscription, of } from 'rxjs';
 import { BusyComponent } from '../busy/busy.component';
 
-interface SampleUser {
+export interface SampleUser {
   id: number;
   name: string;
   email: string;
@@ -29,17 +29,28 @@ export class SampleContentComponent implements OnInit {
    */
   displayedColumns: string[] = ['id', 'name', 'email', 'phone'];
   dataSource!: SampleUser[];
+  subject$ = new Subject();
+  subscription!: Subscription;
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
+    // switchMap と 手動ローディングのサンプルです。
+    this.subscription = this.subject$.pipe(
+      tap(() => {
+        this.partialBusy.start();
+      }),
+      switchMap((() => this.getUsers()))
+    ).subscribe(x => {
+      this.dataSource = x;
+      this.partialBusy.stop();
+    });
   }
 
   onPartialButtonClick(): void {
-    this.partialBusy.add(
-      this.getUsers().subscribe(x => (this.dataSource = x))
-    );
+    this.subject$.next(); // switchMap によりキャンセルされます。
+    this.subject$.next(); // switchMap によりキャンセルされます。
+    this.subject$.next();
   }
 
   onAllButtonClick(): void {
@@ -48,12 +59,19 @@ export class SampleContentComponent implements OnInit {
     );
   }
 
+  onDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
   /**
    * サンプルユーザ情報を取得します。
    */
   getUsers(): Observable<Array<SampleUser>> {
     return this.http
       .get<Array<SampleUser>>('https://jsonplaceholder.typicode.com/users')
-      .pipe(delay(2000));
+      .pipe(
+        delay(2000),
+        map(x => x.filter(u => u.id > Math.floor(Math.random() * 10)))
+      );
   }
 }

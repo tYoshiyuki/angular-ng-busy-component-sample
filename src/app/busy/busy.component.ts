@@ -1,4 +1,4 @@
-import { Component, Input, TemplateRef, Type } from '@angular/core';
+import { Component, Input, OnDestroy, TemplateRef, Type } from '@angular/core';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 import { Subscription } from 'rxjs';
 
@@ -19,7 +19,7 @@ type ICustomBusyConfig = {
   templateUrl: './busy.component.html',
   styleUrls: ['./busy.component.scss']
 })
-export class BusyComponent {
+export class BusyComponent implements OnDestroy {
   /**
    * コンテンツを position: relative な div で囲う場合は、true を指定します。
    * ng-busy の制約上、呼び出し元の親コンポーネントが、position: relative となっている必要があります。
@@ -28,11 +28,19 @@ export class BusyComponent {
 
   config: ICustomBusyConfig;
 
+  manualBusySubscription!: Subscription;
+
   constructor() {
     this.config = {
       template: LoadingSpinnerComponent,
       busy: [],
       disableAnimation: true
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.manualBusySubscription) {
+      this.manualBusySubscription.unsubscribe();
     }
   }
 
@@ -43,5 +51,24 @@ export class BusyComponent {
    */
   public add(...items: Array<Promise<any> | Subscription>): void {
     this.config.busy.push(...items);
+  }
+
+  /**
+   * 手動でローディングを開始します。
+   */
+  public start(): void {
+    if (!this.manualBusySubscription || this.manualBusySubscription.closed) {
+      this.manualBusySubscription = new Subscription();
+      this.config.busy.push(this.manualBusySubscription)
+    }
+  }
+
+  /**
+   * 手動でローディングを停止します。
+   */
+  public stop(): void {
+    if (this.manualBusySubscription) {
+      this.manualBusySubscription.unsubscribe();
+    }
   }
 }
