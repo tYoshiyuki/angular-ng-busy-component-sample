@@ -42,6 +42,12 @@ export class BusyComponent implements OnDestroy {
     if (this.manualBusySubscription) {
       this.manualBusySubscription.unsubscribe();
     }
+
+    this.config.busy.forEach(x => {
+      if (x instanceof Subscription && !x.closed) {
+        x.unsubscribe();
+      }
+    })
   }
 
   /**
