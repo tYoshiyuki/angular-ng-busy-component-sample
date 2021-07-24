@@ -7,7 +7,7 @@ Angular の ng-busy のラッパーコンポーネントを利用したサンプ
 - ng-busy
 
 ## Note
-- BusyComponentにてローディング対象となるコンテンツを囲うことで、指定した部分をローディングブロックすることが出来ます。
+- `BusyComponent`にてローディング対象となるコンテンツを囲うことで、指定した部分をローディングブロックすることが出来ます。
 
 ```html
 <app-busy>
@@ -17,8 +17,8 @@ Angular の ng-busy のラッパーコンポーネントを利用したサンプ
 </app-busy>
 ```
 
-- ng-busy の制約上、呼び出し元の親コンポーネントが、position: relative となっている必要があります。
-- そのため、コンテンツを position: relative な div で囲う場合は、wrapContent = true を指定して下さい。
+- `ng-busy` の制約上、呼び出し元の親コンポーネントが、`position: relative` となっている必要があります。
+- そのため、コンテンツを `position: relative` な `div` で囲う場合は、`wrapContent = true` を指定して下さい。
 
 ```html
 <app-busy [wrapContent]="true">
@@ -28,7 +28,7 @@ Angular の ng-busy のラッパーコンポーネントを利用したサンプ
 </app-busy>
 ```
 
-- ViewChild を利用して、呼び出し元コンポーネントから BusyComponent を読み込みます。
+- `ViewChild` を利用して、呼び出し元コンポーネントから `BusyComponent` を読み込みます。
 
 ```ts
   // BusyComponent を読み込みます。
@@ -39,13 +39,16 @@ Angular の ng-busy のラッパーコンポーネントを利用したサンプ
   // @ViewChild(BusyComponent) busy: BusyComponent;
 ```
 
-- BusyComponent.add() に 監視対象とする Promise / Subscription を登録することで、ローディング処理を行うことが出来ます。
+- `BusyComponent.add()` に 監視対象とする `Promise / Subscription` を登録することで、ローディング処理を行うことが出来ます。
 
 ```ts
     this.partialBusy.add(
       this.getUsers().subscribe(x => (this.dataSource = x))
     );
 ```
+
+- `BusyComponent.start()` を呼出すことで、手動でローディング処理を開始することが出来ます。
+  - 停止する場合は、 `BusyComponent.stop()` を呼出して下さい。
 
 ## Development server
 
