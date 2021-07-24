@@ -2,11 +2,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BusyComponent } from './busy.component';
 import { Subscription } from 'rxjs';
+import { NgBusyModule } from 'ng-busy';
 
 describe('BusyComponent', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ BusyComponent ]
+  beforeEach( () => {
+    TestBed.configureTestingModule({
+      declarations: [ BusyComponent ],
+      imports: [ NgBusyModule ]
     })
     .compileComponents();
   });
@@ -32,7 +34,6 @@ describe('BusyComponent', () => {
     // Assert
     expect(component.wrapContent).toBeTruthy();
   });
-
 
   describe('ngOnDestroy', () => {
     it('正常実施出来ること。', () => {
